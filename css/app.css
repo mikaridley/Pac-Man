@@ -1,0 +1,30 @@
+body {
+  background-color: black;
+  color: white;
+  text-align: center;
+}
+
+.board-container {
+  margin: auto;
+}
+
+.cell {
+  font-size: 1.5em;
+  width: 2em;
+  height: 2em;
+}
+
+.modal {
+  position: absolute;
+  color: rgb(0, 0, 0);
+  font-size: 30px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+  width: 300px;
+  text-align: center;
+  left: 0;
+  right: 0;
+  top: 270px;
+  margin: 0 auto;
+}
