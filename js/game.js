@@ -1,13 +1,13 @@
 'use strict'
 
-const WALL = '#'
+const WALL = '<img src="../img/wall.png" alt="wall" />'
 const FOOD = '.'
 const EMPTY = ' '
 const SUPER_FOOD = '🍔'
 const CHERRY = '🍒'
 
-const ROW_NUMBER = 9
-const COL_NUMBERS = 9
+const ROW_NUMBERS = 10
+const COL_NUMBERS = 20
 
 const gGame = {
   score: 0,
@@ -18,9 +18,9 @@ var gCherryIntervalId
 
 function onInit() {
   gBoard = buildBoard()
+  buildInsideWalls()
   createPacman(gBoard)
   createGhosts(gBoard)
-  isThereFoodLeft()
   createCherry()
   console.table(gBoard)
   renderBoard(gBoard)
@@ -31,7 +31,7 @@ function onInit() {
 function buildBoard() {
   const board = []
 
-  for (var i = 0; i < ROW_NUMBER; i++) {
+  for (var i = 0; i < ROW_NUMBERS; i++) {
     board.push([])
 
     for (var j = 0; j < COL_NUMBERS; j++) {
@@ -39,19 +39,18 @@ function buildBoard() {
 
       if (
         i === 0 ||
-        i === ROW_NUMBER - 1 ||
+        i === ROW_NUMBERS - 1 ||
         j === 0 ||
-        j === COL_NUMBERS - 1 ||
-        (j === 3 && i > 4 && i < ROW_NUMBER - 2)
+        j === COL_NUMBERS - 1
       ) {
         board[i][j] = WALL
       }
 
       if (
         (i === 1 && j === 1) ||
-        (i === ROW_NUMBER - 2 && j === 1) ||
+        (i === ROW_NUMBERS - 2 && j === 1) ||
         (i === 1 && j === COL_NUMBERS - 2) ||
-        (i === ROW_NUMBER - 2 && j === COL_NUMBERS - 2)
+        (i === ROW_NUMBERS - 2 && j === COL_NUMBERS - 2)
       ) {
         board[i][j] = SUPER_FOOD
       }
@@ -60,9 +59,27 @@ function buildBoard() {
   return board
 }
 
+function buildInsideWalls() {
+  gBoard[3][4] = WALL
+  gBoard[3][5] = WALL
+  gBoard[4][4] = WALL
+  gBoard[4][5] = WALL
+
+  gBoard[6][14] = WALL
+  gBoard[6][15] = WALL
+
+  gBoard[2][12] = WALL
+  gBoard[3][12] = WALL
+
+  gBoard[4][8] = WALL
+  gBoard[4][9] = WALL
+  gBoard[5][9] = WALL
+  gBoard[6][9] = WALL
+}
+
 function renderBoard(board) {
   var strHTML = ''
-  for (var i = 0; i < ROW_NUMBER; i++) {
+  for (var i = 0; i < ROW_NUMBERS; i++) {
     strHTML += '<tr>'
     for (var j = 0; j < COL_NUMBERS; j++) {
       const cell = board[i][j]
@@ -95,6 +112,7 @@ function gameOver() {
   // todo
   console.log('Game Over')
   clearInterval(gIntervalGhosts)
+  clearInterval(gCherryIntervalId)
   gGame.isOn = false
   renderCell(gPacman.location, EMPTY)
   changeTextModal('Game Over')
@@ -106,7 +124,7 @@ function changeTextModal(msg) {
 }
 
 function isThereFoodLeft() {
-  for (var i = 0; i < ROW_NUMBER; i++) {
+  for (var i = 0; i < ROW_NUMBERS; i++) {
     for (var j = 0; j < COL_NUMBERS; j++) {
       if (gBoard[i][j] === FOOD) return true
     }
@@ -120,10 +138,10 @@ function createCherry() {
     if (!freeSpace) return
     gBoard[freeSpace.i][freeSpace.j] = CHERRY
     renderCell(freeSpace, CHERRY)
-  }, 5000)
+  }, 15000)
 }
 
-function getRandomFreeSpace(board) {
+function getRandomFreeSpace(board = gBoard) {
   var freeSpaces = []
   for (var i = 0; i < board.length; i++) {
     for (var j = 0; j < board[0].length; j++) {

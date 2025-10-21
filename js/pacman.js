@@ -1,16 +1,17 @@
 'use strict'
 
-const PACMAN = '😀'
+const PACMAN = '<img src="../img/pac-man.png" alt="pac-man" />'
 var gPacman
 
 function createPacman(board) {
   // initialize gPacman...
   gPacman = {
     location: {
-      i: 7,
-      j: 7,
+      i: ROW_NUMBERS - 5,
+      j: COL_NUMBERS - 3,
     },
     isSuper: false,
+    rotation: 'scaleX(-1)',
   }
 
   board[gPacman.location.i][gPacman.location.j] = PACMAN
@@ -31,15 +32,21 @@ function onMovePacman(ev) {
   if (nextCell === SUPER_FOOD && gPacman.isSuper) return
 
   // hitting a ghost? call gameOver
-  if (nextCell === GHOST && gPacman.isSuper) {
+  if (nextCell === GHOSTS && gPacman.isSuper) {
+    var sound = new Audio('../sound/pacman_eatghost.wav')
+    sound.play()
     var ghostIndex = findGhostTheHasBeenEaten(nextLocation)
     gDeadGhosts.push(gGhosts.splice(ghostIndex, 1))
-  } else if (nextCell === GHOST) {
+  } else if (nextCell === GHOSTS) {
+    var sound = new Audio('../sound/pacman_death.wav')
+    sound.play()
     gameOver()
     return
   }
 
   if (nextCell === FOOD) {
+    var sound = new Audio('../sound/pacman_chomp.wav')
+    sound.play()
     // hitting food? update score
     gBoard[nextLocation.i][nextLocation.j] = EMPTY
     updateScore(1)
@@ -47,6 +54,8 @@ function onMovePacman(ev) {
   }
 
   if (nextCell === CHERRY) {
+    var sound = new Audio('../sound/pacman_eatfruit.wav')
+    sound.play()
     // hitting cherry? update score
     gBoard[nextLocation.i][nextLocation.j] = EMPTY
     updateScore(10)
@@ -54,6 +63,12 @@ function onMovePacman(ev) {
 
   //hitting superfood
   if (nextCell === SUPER_FOOD) {
+    var sound = new Audio('../sound/pacman_eatfruit.wav')
+    sound.play()
+    for (var i = 0; i < gGhosts.length; i++) {
+      var cuttGhost = gGhosts[i]
+      renderCell(cuttGhost.location, getGhostHTML(SICK_GHOST))
+    }
     gPacman.isSuper = true
     setTimeout(() => {
       gPacman.isSuper = false
@@ -74,7 +89,10 @@ function onMovePacman(ev) {
   gPacman.location = nextLocation
 
   // update the DOM
+
   renderCell(gPacman.location, PACMAN)
+  var img = document.querySelector("[alt='pac-man']")
+  img.style.transform = gPacman.rotation
 }
 
 function getNextLocation(eventKeyboard) {
@@ -88,15 +106,19 @@ function getNextLocation(eventKeyboard) {
 
   switch (eventKeyboard.code) {
     case 'ArrowUp':
+      gPacman.rotation = 'rotate(90deg)'
       nextLocation.i--
       break
     case 'ArrowDown':
+      gPacman.rotation = 'rotate(-90deg)'
       nextLocation.i++
       break
     case 'ArrowRight':
+      gPacman.rotation = 'scaleX(-1)'
       nextLocation.j++
       break
     case 'ArrowLeft':
+      gPacman.rotation = 'scaleX(1)'
       nextLocation.j--
       break
     default:
@@ -108,8 +130,13 @@ function getNextLocation(eventKeyboard) {
 
 function checkVictory() {
   if (isThereFoodLeft()) return
+  var sound = new Audio('../sound/win.mp3')
+  sound.play()
+  clearInterval(gIntervalGhosts)
+  clearInterval(gCherryIntervalId)
   changeTextModal('You Win!')
   document.querySelector('.modal').hidden = false
+  gGame.isOn = false
 }
 
 function findGhostTheHasBeenEaten(nextLocation) {

@@ -1,29 +1,45 @@
 'use strict'
 
-const GHOST = '&#9781'
+const GHOSTS = [
+  '<img src="../img/orange.png" alt="ghost" />',
+  '<img src="../img/pink.png" alt="ghost" />',
+  '<img src="../img/red.png" alt="ghost" />',
+  '<img src="../img/blue.png" alt="ghost" />',
+]
+const SICK_GHOST = '<img src="../img/sick.png" alt="ghost" />'
 var gGhosts
 var gDeadGhosts = []
 var gIntervalGhosts
 
 function createGhost(board) {
+  var randomGhost = getRandomInt(0, GHOSTS.length)
+  var freeSpaces = [
+    { i: 2, j: 2 },
+    { i: 3, j: 2 },
+    { i: 4, j: 2 },
+    { i: 5, j: 2 },
+    { i: 6, j: 2 },
+    { i: 7, j: 2 },
+  ]
+  var randomLocation = getRandomInt(0, freeSpaces.length)
   var ghost = {
     location: {
-      i: 3,
-      j: 3,
+      i: freeSpaces[randomLocation].i,
+      j: freeSpaces[randomLocation].j,
     },
     currCellContent: FOOD,
-    color: getRandomColor(),
+    color: GHOSTS[randomGhost],
   }
 
   gGhosts.push(ghost)
-  board[ghost.location.i][ghost.location.j] = GHOST
+  board[ghost.location.i][ghost.location.j] = GHOSTS[randomGhost]
 }
 
 function createGhosts(board) {
   // empty the gGhosts array, create 3 ghosts
   gGhosts = []
 
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 4; i++) {
     createGhost(board)
   }
   // run the interval to move them
@@ -55,7 +71,7 @@ function moveGhost(ghost) {
   // console.log('nextCell:', nextCell)
 
   // return if cannot move
-  if (nextCell === WALL || nextCell === GHOST || nextCell === CHERRY) return
+  if (nextCell === WALL || nextCell === GHOSTS || nextCell === CHERRY) return
 
   // hitting a pacman? call gameOver
   if (nextCell === PACMAN) {
@@ -67,19 +83,17 @@ function moveGhost(ghost) {
   gBoard[ghost.location.i][ghost.location.j] = ghost.currCellContent
   // update the DOM
   renderCell(ghost.location, ghost.currCellContent)
-  paintCell(ghost.location, '#ffffff')
+  //   paintCell(ghost.location, '#ffffff')
 
   // Move the ghost to new location (save cell contents):
   // update the model
-  gBoard[nextLocation.i][nextLocation.j] = GHOST
+  gBoard[nextLocation.i][nextLocation.j] = GHOSTS
   ghost.location = nextLocation
   ghost.currCellContent = nextCell
 
   // update the DOM
-
-  if (gPacman.isSuper) paintCell(ghost.location, '#fd0101')
-  else paintCell(ghost.location, ghost.color)
-  renderCell(ghost.location, getGhostHTML(ghost))
+  if (gPacman.isSuper) renderCell(ghost.location, getGhostHTML(SICK_GHOST))
+  else renderCell(ghost.location, getGhostHTML(ghost.color))
 }
 
 function getMoveDiff() {
@@ -97,8 +111,8 @@ function getMoveDiff() {
   }
 }
 
-function getGhostHTML(ghost) {
-  return `<span>${GHOST}</span>`
+function getGhostHTML(color) {
+  return `<span>${color}</span>`
 }
 
 function getRandomColor() {

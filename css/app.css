@@ -28,3 +28,12 @@ body {
   top: 270px;
   margin: 0 auto;
 }
+
+img {
+  width: 25px;
+}
+
+button {
+  font-size: 25px;
+  background-color: rgb(255, 255, 255);
+}
