@@ -1,6 +1,6 @@
 'use strict'
 
-const WALL = '<img src="../img/wall.png" alt="wall" />'
+const WALL = '<img src="img/wall.png" alt="wall" />'
 const FOOD = '.'
 const EMPTY = ' '
 const SUPER_FOOD = '🍔'

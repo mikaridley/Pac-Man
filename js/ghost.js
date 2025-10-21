@@ -1,12 +1,12 @@
 'use strict'
 
 const GHOSTS = [
-  '<img src="../img/orange.png" alt="ghost" />',
-  '<img src="../img/pink.png" alt="ghost" />',
-  '<img src="../img/red.png" alt="ghost" />',
-  '<img src="../img/blue.png" alt="ghost" />',
+  '<img src="img/orange.png" alt="ghost" />',
+  '<img src="img/pink.png" alt="ghost" />',
+  '<img src="img/red.png" alt="ghost" />',
+  '<img src="img/blue.png" alt="ghost" />',
 ]
-const SICK_GHOST = '<img src="../img/sick.png" alt="ghost" />'
+const SICK_GHOST = '<img src="img/sick.png" alt="ghost" />'
 var gGhosts
 var gDeadGhosts = []
 var gIntervalGhosts
